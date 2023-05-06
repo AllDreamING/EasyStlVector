@@ -1,18 +1,73 @@
 #include<iostream>
+#include<string>
+#include<vector>
+#include<sys/time.h>
 #include "Vector.h"
+
+// using namespace std;
 
 using namespace selfstl;
 
 int main(){
-    //creat
-    Vector<int> v;
-    //push_back
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
-    v.show();
 
-    
+
+    struct timeval tv1;
+    gettimeofday(&tv1, NULL);
+    int start_sec1 = tv1.tv_sec;
+    int start_usec1 = tv1.tv_usec;
+    const int max1 = 10000;
+    Vector<bool> v1;
+    for (int i = 0; i < max1; i++)
+    {
+        v1.insert(v1.begin(), true);
+    }
+    gettimeofday(&tv1, NULL);
+    int end_sec1 = tv1.tv_sec;
+    int end_usec1 = tv1.tv_usec;
+    double time_diff1 = (end_sec1 - start_sec1) * 1000000 + (end_usec1 - start_usec1);
+    std::cout << time_diff1 / 1000 / max1 << "ms" << std::endl;
+
+
+    struct timeval tv2;
+    gettimeofday(&tv2, NULL);
+    int start_sec2 = tv2.tv_sec;
+    int start_usec2 = tv2.tv_usec;
+    const int max2 = 10000;
+    std::vector<bool> v2;
+    for (int i = 0; i < max2; i++)
+    {
+        v2.insert(v2.begin(), true);
+    }
+    gettimeofday(&tv2, NULL);
+    int end_sec2 = tv2.tv_sec;
+    int end_usec2 = tv2.tv_usec;
+    double time_diff2 = (end_sec2 - start_sec2) * 1000000 + (end_usec2 - start_usec2);
+    std::cout << time_diff2 / 1000 / max2 << "ms" << std::endl;
+
+
+
+
+
+
+
+
+
+
+    // //creat
+    // Vector<int> v;
+    // //push_back
+    // v.push_back(1);
+    // v.push_back(2);
+    // v.push_back(3);
+    // v.show();
+
+    // //end
+    // Vector<int>::Iterator it = v.end();
+    // std::cout<<"v.end():"<<*it<<std::endl;
+
+    // //begin
+    // Vector<int>::Iterator it = v.begin();
+    // std::cout<<"v.begin():"<<*it<<std::endl;
 
     // //=
     // Vector<int> v2;
