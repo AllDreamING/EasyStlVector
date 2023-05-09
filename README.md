@@ -26,3 +26,5 @@
 - Iterator find(const T& value);//自定义函数，返回指定值的迭代器
 
 ## 同std::vector进行**性能对比**
+### 
+### 性能提升策略:
