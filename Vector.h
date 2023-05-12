@@ -193,8 +193,13 @@ void Vector<T>::reserve(int n)
         }
     }
     T* data = new T[m_capacity];
-    for(int i=0;i<m_size;i++){
-        data[i] = m_data[i];
+    if (is_base_type())
+    {
+        std::memcpy(data, m_data, m_size * sizeof(T));
+    }else{
+        for(int i=0;i<m_size;i++){
+            data[i] = m_data[i];
+        }
     }
     //删除旧数组
     if(m_data!=nullptr){
@@ -227,8 +232,13 @@ void Vector<T>::resize(int size)
         }
     }
     T* data = new T[m_capacity];
-    for(int i=0;i<m_size;i++){
-        data[i] = m_data[i];
+    if (is_base_type())
+    {
+        std::memcpy(data, m_data, m_size * sizeof(T));
+    }else{
+        for(int i=0;i<m_size;i++){
+            data[i] = m_data[i];
+        }
     }
     for(int i=m_size;i<size;i++){
         data[i] = T();
@@ -333,8 +343,13 @@ Vector<T> &Vector<T>::operator=(const Vector<T> &other)
         }
     }
     m_data = new T[m_capacity];
-    for(int i=0;i<other.m_size;i++){
-        m_data[i] = other.m_data[i];
+    if (is_base_type())
+    {
+        std::memcpy(m_data, other.m_data, other.m_size * sizeof(T));
+    }else{
+        for(int i=0;i<other.m_size;i++){
+            m_data[i] = other.m_data[i];
+        }
     }
     m_size = other.m_size;
     return *this;
@@ -376,8 +391,16 @@ typename Vector<T>::Iterator Vector<T>::insert(const Iterator it, int n, const T
 {
         int size = it - begin();//要插入的位置
         if(m_size+n <= m_capacity){//不需要扩容
-            for(int i=m_size;i>size;i--){//先将后面的向后移
-                m_data[i+n-1] = m_data[i-1]; 
+            // for(int i=m_size;i>size;i--){//先将后面的向后移
+            //     m_data[i+n-1] = m_data[i-1]; 
+            // }
+            if (is_base_type())
+            {
+                std::memmove(m_data + size + n, m_data + size, (m_size - size) * sizeof(T));
+            }else{
+                for(int i=m_size;i>size;i--){
+                    m_data[i+n-1] = m_data[i-1];
+                }
             }
             for(int i=size;i<n;i++){//再插入
                 m_data[i] = value;
@@ -394,15 +417,37 @@ typename Vector<T>::Iterator Vector<T>::insert(const Iterator it, int n, const T
 			}
 		}
 		T* data = new T[m_capacity];
-		for (int i = 0; i < size; i++) {
-			data[i] = m_data[i];
-		}
+		// for (int i = 0; i < size; i++) {
+		// 	data[i] = m_data[i];
+		// }
+        if (is_base_type())
+        {
+            std::memcpy(data, m_data, size * sizeof(T));
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)
+            {
+                data[i] = m_data[i];
+            }
+        }
 		for (int i = 0; i < n; i++) {
 			data[size + i] = value;
 		}
-		for (int i = size; i < m_size; i++) {
-			data[i] = m_data[i];
-		}
+		// for (int i = size; i < m_size; i++) {
+		// 	data[i] = m_data[i];
+		// }
+        if (is_base_type())
+        {
+            std::memcpy(data + size + n, m_data + size, (m_size - size) * sizeof(T));
+        }
+        else
+        {
+            for (int i = size; i < m_size; i++)
+            {
+                data[i + n] = m_data[i];
+            }
+        }
 		if (m_data != nullptr) {
 			delete[] m_data;
 			m_data = nullptr;
@@ -419,7 +464,8 @@ bool Vector<T>::is_base_type()
     {
         return true;
     }
-    return (typeid(T) == typeid(bool)) ||
+    return 
+            (typeid(T) == typeid(bool)) ||
            (typeid(T) == typeid(char)) ||
            (typeid(T) == typeid(unsigned char)) ||
            (typeid(T) == typeid(short)) ||
